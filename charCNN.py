@@ -6,10 +6,10 @@ from text_processing import word_tokenization
 
 
 class CharCNN(nn.Module):
-    def __init__(self, num_chars, embedding_dim, filters):
+    def __init__(self, num_chars, num_channels, filters):
         super(CharCNN, self).__init__()
-        self.embeddings = nn.Embedding(num_chars, embedding_dim)
-        self.conv_layers = nn.ModuleList([nn.Conv1d(in_channels=embedding_dim,
+        self.embeddings = nn.Embedding(num_chars, num_channels)
+        self.conv_layers = nn.ModuleList([nn.Conv1d(in_channels=num_channels,
                                      out_channels=num_f,
                                      kernel_size=width,
                                      bias=True) for width, num_f in filters])
@@ -20,7 +20,7 @@ class CharCNN(nn.Module):
         # character embedding: num_tokens x num_characters
         character_embedding = torch.tensor(inputs, dtype=torch.long)
 
-        # embedding matrix: num_tokens x num_characters x embedding_dim
+        # embedding matrix: num_tokens x num_characters x num_channels
         _inputs = self.embeddings(character_embedding)
 
         for conv_layer in self.conv_layers:
@@ -106,9 +106,9 @@ def get_chardict_and_padded_input(inputs, max_characters_per_token):
     return char_dict, padded_input
 
 
-def get_models(num_chars, embedding_dim, filters, n_highway, output_dim):
+def get_models(num_chars, num_channels, filters, n_highway, output_dim):
     input_dim = sum([x[1] for x in filters])
-    CharCNN_l = CharCNN(num_chars, embedding_dim, filters)
+    CharCNN_l = CharCNN(num_chars, num_channels, filters)
     Highway_l = Highway(input_dim, n_highway)
     Projection_l = Projection(input_dim, output_dim)
     return CharCNN_l, Highway_l, Projection_l
