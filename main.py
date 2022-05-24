@@ -20,7 +20,7 @@ def main(args):
 
 
     # Feed intialized embedding to BiLSTM
-    print("Result of CharCNN embeddings.")
+    print("Result of CharCNN.")
     for tk, emb in zip(tokens, initial_embeddings):
         print("{}: {}".format(tk, emb))
 
